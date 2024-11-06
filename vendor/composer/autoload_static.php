@@ -13,7 +13,12 @@ class ComposerStaticInit17fa9a99f74d60c869d82a9255189228
     public static $prefixLengthsPsr4 = array (
         'P' => 
         array (
+            'Psr\\Http\\Server\\' => 16,
             'Psr\\Http\\Message\\' => 17,
+        ),
+        'N' => 
+        array (
+            'Nyholm\\Psr7\\' => 12,
         ),
         'L' => 
         array (
@@ -21,6 +26,7 @@ class ComposerStaticInit17fa9a99f74d60c869d82a9255189228
             'League\\Glide\\' => 13,
             'League\\Flysystem\\Local\\' => 23,
             'League\\Flysystem\\' => 17,
+            'Laminas\\HttpHandlerRunner\\' => 26,
         ),
         'I' => 
         array (
@@ -33,10 +39,18 @@ class ComposerStaticInit17fa9a99f74d60c869d82a9255189228
     );
 
     public static $prefixDirsPsr4 = array (
+        'Psr\\Http\\Server\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/http-server-handler/src',
+        ),
         'Psr\\Http\\Message\\' => 
         array (
             0 => __DIR__ . '/..' . '/psr/http-factory/src',
             1 => __DIR__ . '/..' . '/psr/http-message/src',
+        ),
+        'Nyholm\\Psr7\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/nyholm/psr7/src',
         ),
         'League\\MimeTypeDetection\\' => 
         array (
@@ -53,6 +67,10 @@ class ComposerStaticInit17fa9a99f74d60c869d82a9255189228
         'League\\Flysystem\\' => 
         array (
             0 => __DIR__ . '/..' . '/league/flysystem/src',
+        ),
+        'Laminas\\HttpHandlerRunner\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/laminas/laminas-httphandlerrunner/src',
         ),
         'Intervention\\Image\\' => 
         array (

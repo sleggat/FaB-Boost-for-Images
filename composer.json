@@ -1,5 +1,7 @@
 {
     "require": {
-        "league/glide": "^2.3"
+        "league/glide": "^2.3",
+        "nyholm/psr7": "^1.8",
+        "laminas/laminas-httphandlerrunner": "^2.11"
     }
 }
