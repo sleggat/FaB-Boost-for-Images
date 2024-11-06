@@ -1,5 +1,7 @@
 <?php
 
+//http://localhost:8888/remote.php?i=https://frontandback.co.nz/assets/casestudies/website-loadingdocs.jpg&w=1200&blur=100
+
 require 'vendor/autoload.php';
 
 // Define source and cache directories
