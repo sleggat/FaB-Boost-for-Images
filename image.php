@@ -1,6 +1,10 @@
 <?php
 require 'vendor/autoload.php';
 
+$whitelistedDomains = [
+    'frontandback.co.nz'
+];
+
 use League\Glide\ServerFactory;
 use League\Glide\Responses\PsrResponseFactory;
 use Nyholm\Psr7\Factory\Psr17Factory;
@@ -45,7 +49,17 @@ function downloadImage($url, $sourceDir)
         throw new RuntimeException('Invalid URL');
     }
 
-    $domainName = str_replace(['http://', 'https://', 'www.'], '', $parsedUrl['host']);
+    // Check if the domain is in the whitelist
+    global $whitelistedDomains;
+    $domain = $parsedUrl['host'];
+
+    if (!in_array($domain, $whitelistedDomains)) {
+        header('HTTP/1.1 403 Forbidden');
+        echo 'Forbidden: This domain is not allowed to serve images.';
+        exit;
+    }
+
+    $domainName = basename(str_replace(['http://', 'https://', 'www.'], '', $parsedUrl['host']));
     $path = $parsedUrl['path'];
     $baseName = basename($path);
     $md5Hash = md5($path);
@@ -78,22 +92,30 @@ function downloadImage($url, $sourceDir)
     return $outputFileName;
 }
 
-// Get URL parameters
-$imageUrl = $_GET['i'] ?? null;
+// Get and Sanitize URL parameters
+$imageUrl = isset($_GET['i']) ? filter_var($_GET['i'], FILTER_SANITIZE_URL) : null;
+
+// Sanitize the glide parameters
 $glideParams = array_filter([
-    'w' => $_GET['w'] ?? null,
-    'h' => $_GET['h'] ?? null,
-    'q' => $_GET['q'] ?? null,
-    'blur' => $_GET['blur'] ?? null,
-    'sharp' => $_GET['sharp'] ?? null,
-    'fm' => $_GET['fm'] ?? null,
-    'crop' => $_GET['crop'] ?? null,
-    'bri' => $_GET['bri'] ?? null,
-    'con' => $_GET['con'] ?? null,
-    'gam' => $_GET['gam'] ?? null,
-    'flip' => $_GET['flip'] ?? null,
-    'or' => $_GET['or'] ?? null,
+    'w' => isset($_GET['w']) ? filter_var($_GET['w'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'h' => isset($_GET['h']) ? filter_var($_GET['h'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'q' => isset($_GET['q']) ? filter_var($_GET['q'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'blur' => isset($_GET['blur']) ? filter_var($_GET['blur'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'sharp' => isset($_GET['sharp']) ? filter_var($_GET['sharp'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'fm' => isset($_GET['fm']) ? filter_var($_GET['fm'], FILTER_SANITIZE_STRING) : null,
+    'crop' => isset($_GET['crop']) ? filter_var($_GET['crop'], FILTER_SANITIZE_STRING) : null,
+    'bri' => isset($_GET['bri']) ? filter_var($_GET['bri'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'con' => isset($_GET['con']) ? filter_var($_GET['con'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'gam' => isset($_GET['gam']) ? filter_var($_GET['gam'], FILTER_SANITIZE_NUMBER_INT) : null,
+    'flip' => isset($_GET['flip']) ? filter_var($_GET['flip'], FILTER_SANITIZE_STRING) : null,
+    'or' => isset($_GET['or']) ? filter_var($_GET['or'], FILTER_SANITIZE_STRING) : null,
 ]);
+
+if ((isset($glideParams['w']) && $glideParams['w'] > 5000) || (isset($glideParams['h']) && $glideParams['h'] > 5000)) {
+    header('HTTP/1.1 413 Payload Too Large');
+    echo 'Image dimensions are too large.';
+    exit;
+}
 
 // Process the image if a URL is provided
 if ($imageUrl) {
@@ -101,6 +123,15 @@ if ($imageUrl) {
         $savedFilePath = downloadImage($imageUrl, $sourceDir);
 
         if ($savedFilePath && file_exists($savedFilePath)) {
+
+            $imageInfo = getimagesize($savedFilePath);
+            if (!$imageInfo) {
+                unlink($savedFilePath);  // Remove invalid file
+                header('HTTP/1.1 400 Bad Request');
+                echo 'Invalid image file.';
+                exit;
+            }
+
             // Set canonical URL
             $canonicalUrl = urlencode($imageUrl);
             if (!empty($glideParams)) {
