@@ -1,34 +1,59 @@
 <?php
 
-// Set this to be called via cron
-
 function deleteOldFilesAndEmptyDirs($directory, $fileAgeLimitInSeconds = 2592000)
 {
-    // Create a Recursive Directory Iterator to traverse the directory structure
     $iterator = new RecursiveIteratorIterator(
         new RecursiveDirectoryIterator($directory, RecursiveDirectoryIterator::SKIP_DOTS),
         RecursiveIteratorIterator::CHILD_FIRST
     );
 
     $currentTime = time();
+    $deletedFiles = 0;
+    $deletedDirs = 0;
+    $totalSpaceSaved = 0;
 
     foreach ($iterator as $fileInfo) {
         $filePath = $fileInfo->getRealPath();
 
         if ($fileInfo->isFile()) {
-            // Check if the file is older than the specified age limit
             if ($currentTime - $fileInfo->getCTime() > $fileAgeLimitInSeconds) {
-                unlink($filePath); // Delete old file
+                $fileSize = $fileInfo->getSize();
+                if (unlink($filePath)) {
+                    echo "Deleted file: $filePath (Size: " . formatSize($fileSize) . ")\n";
+                    $deletedFiles++;
+                    $totalSpaceSaved += $fileSize;
+                } else {
+                    echo "Failed to delete file: $filePath\n";
+                }
             }
         } elseif ($fileInfo->isDir()) {
-            // Remove empty directories
-            @rmdir($filePath);
+            if (@rmdir($filePath)) {
+                echo "Deleted empty directory: $filePath\n";
+                $deletedDirs++;
+            }
         }
     }
+
+    echo "\nCleanup Summary:\n";
+    echo "Total files deleted: $deletedFiles\n";
+    echo "Total empty directories deleted: $deletedDirs\n";
+    echo "Total disk space saved: " . formatSize($totalSpaceSaved) . "\n";
+}
+
+// Format bytes into a human-readable format (KB, MB, etc.)
+function formatSize($bytes)
+{
+    if ($bytes < 1024) return $bytes . " B";
+    $units = ['KB', 'MB', 'GB', 'TB'];
+    for ($i = 0; $bytes >= 1024 && $i < count($units); $i++) $bytes /= 1024;
+    return round($bytes, 2) . ' ' . $units[$i];
 }
 
 // Run cleanup on both directories
+echo "Starting cleanup for './remote' directory...\n";
 deleteOldFilesAndEmptyDirs(__DIR__ . '/remote');
+
+echo "\nStarting cleanup for './cache/remote' directory...\n";
 deleteOldFilesAndEmptyDirs(__DIR__ . '/cache/remote');
 
 echo "Cleanup complete.\n";

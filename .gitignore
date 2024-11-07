@@ -2,6 +2,7 @@
 /cache/*
 /remote/*
 !cache/.gitkeep
+!cache/remote/.gitkeep
 !remote/.gitkeep
 
 # Composer
@@ -16,7 +17,7 @@ composer.lock
 # IDE and system files
 .idea/
 .vscode/
-.DS_Store
+**/.DS_Store
 Thumbs.db
 
 # Logs
