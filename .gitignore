@@ -1,0 +1,23 @@
+# Cached and downloaded images
+/cache/*
+/remote/*
+!cache/.gitkeep
+!remote/.gitkeep
+
+# Composer
+/vendor/
+composer.lock
+
+# Environment files
+.env
+.env.*
+!.env.example
+
+# IDE and system files
+.idea/
+.vscode/
+.DS_Store
+Thumbs.db
+
+# Logs
+*.log
