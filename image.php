@@ -15,8 +15,8 @@ use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 // Define source and cache directories
 $cacheDir = '.';
-$remoteDir = $cacheDir . '/cache/remote';
-$localDir = 'cache';
+$remoteDir = $cacheDir . '/cache_remote';
+$localDir = 'cache_local';
 
 // Create PSR-17 factory
 $psr17Factory = new Psr17Factory();

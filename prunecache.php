@@ -51,9 +51,9 @@ function formatSize($bytes)
 
 // Run cleanup on both directories
 echo "Starting cleanup for './remote' directory...\n";
-deleteOldFilesAndEmptyDirs(__DIR__ . '/remote');
+deleteOldFilesAndEmptyDirs(__DIR__ . '/cache_remote');
 
 echo "\nStarting cleanup for './cache/remote' directory...\n";
-deleteOldFilesAndEmptyDirs(__DIR__ . '/cache/remote');
+deleteOldFilesAndEmptyDirs(__DIR__ . '/cache_local/cache_remote');
 
 echo "Cleanup complete.\n";
