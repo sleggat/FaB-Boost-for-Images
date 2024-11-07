@@ -1,9 +1,14 @@
 <?php
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
 require 'vendor/autoload.php';
 
 $whitelistedDomains = [
     'frontandback.co.nz'
 ];
+// $default_quality = 75;
 
 use League\Glide\ServerFactory;
 use League\Glide\Responses\PsrResponseFactory;
@@ -41,6 +46,20 @@ $server = ServerFactory::create([
     ),
 ]);
 
+// Check if image exists already
+function checkImageCache($server, $savedFilePath, $glideParams)
+{
+    try {
+        $cachedPath = $server->makeImage($savedFilePath, $glideParams);
+        if (file_exists($cachedPath)) {
+            return true;
+        }
+    } catch (Exception $e) {
+        return false;
+    }
+    return false;
+}
+
 // Function to download an image
 function downloadImage($url, $sourceDir)
 {
@@ -55,15 +74,26 @@ function downloadImage($url, $sourceDir)
 
     if (!in_array($domain, $whitelistedDomains)) {
         header('HTTP/1.1 403 Forbidden');
-        echo 'Forbidden: This domain is not allowed to serve images.';
+        echo 'Forbidden: This domain (' . $domain . ') is not allowed to serve images.';
         exit;
     }
+
 
     $domainName = basename(str_replace(['http://', 'https://', 'www.'], '', $parsedUrl['host']));
     $path = $parsedUrl['path'];
     $baseName = basename($path);
     $md5Hash = md5($path);
-    $outputFileName = './' . $sourceDir . '/' . $domainName . '/' . pathinfo($baseName, PATHINFO_FILENAME) . '-' . $md5Hash . '.jpg';
+
+    // Extract the file extension
+    $extension = strtolower(pathinfo($baseName, PATHINFO_EXTENSION));
+    if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'])) {
+        header('HTTP/1.1 415 Unsupported Media Type');
+        echo 'Unsupported image format.';
+        exit;
+    }
+
+    // Save the file with the correct extension
+    $outputFileName = './' . $sourceDir . '/' . $domainName . '/' . pathinfo($baseName, PATHINFO_FILENAME) . '-' . $md5Hash . '.' . $extension;
 
     if (!file_exists(dirname($outputFileName))) {
         mkdir(dirname($outputFileName), 0777, true);
@@ -82,7 +112,9 @@ function downloadImage($url, $sourceDir)
     curl_close($ch);
     fclose($fp);
 
-    if (!$success || $httpCode !== 200) {
+    if (
+        !$success || $httpCode !== 200
+    ) {
         if (file_exists($outputFileName)) {
             unlink($outputFileName);
         }
@@ -92,8 +124,20 @@ function downloadImage($url, $sourceDir)
     return $outputFileName;
 }
 
+function generateCacheKey($imageUrl, $glideParams)
+{
+    // Create a string that includes both the image URL and parameters
+    $cacheString = $imageUrl . http_build_query($glideParams);
+
+    // Generate a hash (checksum) from the string
+    return md5($cacheString);  // Or use sha1 or any other hashing method
+}
+
 // Get and Sanitize URL parameters
 $imageUrl = isset($_GET['i']) ? filter_var($_GET['i'], FILTER_SANITIZE_URL) : null;
+if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
+    $imageUrl = 'https://' . $imageUrl;
+}
 
 // Sanitize the glide parameters
 $glideParams = array_filter([
@@ -102,7 +146,7 @@ $glideParams = array_filter([
     'q' => isset($_GET['q']) ? filter_var($_GET['q'], FILTER_SANITIZE_NUMBER_INT) : null,
     'blur' => isset($_GET['blur']) ? filter_var($_GET['blur'], FILTER_SANITIZE_NUMBER_INT) : null,
     'sharp' => isset($_GET['sharp']) ? filter_var($_GET['sharp'], FILTER_SANITIZE_NUMBER_INT) : null,
-    'fm' => isset($_GET['fm']) ? filter_var($_GET['fm'], FILTER_SANITIZE_STRING) : null,
+    'fm' => isset($_GET['fm']) ? filter_var($_GET['fm'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : null, // Changed here
     'crop' => isset($_GET['crop']) ? filter_var($_GET['crop'], FILTER_SANITIZE_STRING) : null,
     'bri' => isset($_GET['bri']) ? filter_var($_GET['bri'], FILTER_SANITIZE_NUMBER_INT) : null,
     'con' => isset($_GET['con']) ? filter_var($_GET['con'], FILTER_SANITIZE_NUMBER_INT) : null,
@@ -120,32 +164,60 @@ if ((isset($glideParams['w']) && $glideParams['w'] > 5000) || (isset($glideParam
 // Process the image if a URL is provided
 if ($imageUrl) {
     try {
-        $savedFilePath = downloadImage($imageUrl, $sourceDir);
+        $parsedUrl = parse_url($imageUrl);
+        $domainName = basename(str_replace(['http://', 'https://', 'www.'], '', $parsedUrl['host']));
+        $path = $parsedUrl['path'];
+        $baseName = basename($path);
+        $md5Hash = md5($path);
+        $extension = strtolower(pathinfo($baseName, PATHINFO_EXTENSION));
+
+        // Construct the expected source path
+        $expectedSourcePath = './' . $sourceDir . '/' . $domainName . '/' .
+            pathinfo($baseName, PATHINFO_FILENAME) . '-' .
+            $md5Hash . '.' . $extension;
+
+        // Check if we need to download
+        if (!file_exists($expectedSourcePath)) {
+            $savedFilePath = downloadImage($imageUrl, $sourceDir);
+        } else {
+            $savedFilePath = $expectedSourcePath;
+        }
 
         if ($savedFilePath && file_exists($savedFilePath)) {
 
+            $maxFileSize = 10 * 1024 * 1024; // 10MB
+            if (filesize($savedFilePath) > $maxFileSize) {
+                unlink($savedFilePath);  // Remove large file
+                header('HTTP/1.1 413 Payload Too Large');
+                echo 'File size exceeds the limit.';
+                exit;
+            }
+
             $imageInfo = getimagesize($savedFilePath);
-            if (!$imageInfo) {
-                unlink($savedFilePath);  // Remove invalid file
+            if (!$imageInfo || !in_array($imageInfo['mime'], ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'])) {
+                unlink($savedFilePath);  // Remove invalid image
                 header('HTTP/1.1 400 Bad Request');
                 echo 'Invalid image file.';
                 exit;
             }
 
             // Set canonical URL
-            $canonicalUrl = urlencode($imageUrl);
+            $cacheKey = generateCacheKey($imageUrl, $glideParams);
+
+            // Construct the canonical URL with the cache version
+            $canonicalUrl = urlencode($imageUrl) . '&v=' . $cacheKey;
             if (!empty($glideParams)) {
                 $canonicalUrl .= '&' . http_build_query($glideParams);
             }
 
             // Generate the image response with Glide
+
             $response = $server->getImageResponse($savedFilePath, $glideParams);
 
-            // Add canonical header
-            $response = $response->withHeader('Link', sprintf('<%s>; rel="canonical"', $canonicalUrl))
-                ->withHeader('Content-Type', 'image/jpeg')
-                ->withHeader('Cache-Control', 'public, max-age=31536000')
+            $response = $response->withHeader('X-Cache-Status', file_exists($expectedSourcePath) ? 'HIT' : 'MISS')
+                ->withHeader('Cache-Control', 'public, max-age=8640000, s-maxage=31536000, stale-while-revalidate=86400, stale-if-error=86400')
                 ->withHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
+
 
             // Output the response
             (new SapiEmitter())->emit($response);
