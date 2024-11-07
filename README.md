@@ -1,1 +1,1 @@
-Simple image manipulation using Glide.
+Simple image manipulation using Glide https://glide.thephpleague.com
