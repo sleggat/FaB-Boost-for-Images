@@ -14,8 +14,9 @@ use Nyholm\Psr7\Response;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 // Define source and cache directories
-$remoteDir = 'remote';
-$cacheDir = './cache';
+$cacheDir = '.';
+$remoteDir = $cacheDir . '/cache/remote';
+$localDir = 'cache';
 
 // Create PSR-17 factory
 $psr17Factory = new Psr17Factory();
@@ -35,8 +36,8 @@ $streamCallback = function ($source) use ($psr17Factory) {
 
 // Create the Glide server
 $server = ServerFactory::create([
-    'source' => '.',
-    'cache' => $cacheDir,
+    'source' => $cacheDir,
+    'cache' => $localDir,
     'response' => new PsrResponseFactory(
         $responsePrototype,
         $streamCallback
