@@ -1,4 +1,4 @@
-# PHP Image Processing Service
+# PHP Remote Image Processing Service
 
 A secure and efficient image processing microservice that remote downloads, caches, and manipulates images on the fly. Built with PHP and the League's Glide library, it provides a simple URL-based API for image transformations.
 
@@ -54,7 +54,7 @@ chmod 777 cache remote
 
 ```php
 $whitelistedDomains = [
-    'yourdomain.com',
+    'your-domain.com',
     'otherdomain.com'
 ];
 ```
@@ -100,7 +100,7 @@ https://your-domain.com/image/example.com/image.jpg?w=800&h=600&q=80
 
 ## Security
 
-The service includes several security measures:
+The service currently includes several security measures:
 
 - Domain whitelisting
 - File size limits (10MB default)
@@ -115,22 +115,5 @@ Images are cached in two layers:
 
 1. Original downloaded images in the `remote/` directory
 2. Processed images in the `cache/` directory
-
-Cache-Control headers are set to:
-
-- max-age: 8640000
-- s-maxage: 31536000
-- stale-while-revalidate: 86400
-- stale-if-error: 86400
-
-## Nginx Configuration
-
-Include the provided Nginx configuration for optimal performance and security. Key features:
-
-- SSL support
-- Proper routing for image processing
-- Static file handling
-- PHP-FPM configuration
-- Cache header handling
 
 I wouldn't recommend using this in production, yet.
