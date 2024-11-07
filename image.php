@@ -5,10 +5,7 @@ error_reporting(E_ALL);
 
 require 'vendor/autoload.php';
 
-$whitelistedDomains = [
-    'frontandback.co.nz'
-];
-// $default_quality = 75;
+$whitelistedDomains = include 'config/whitelist.php';
 
 use League\Glide\ServerFactory;
 use League\Glide\Responses\PsrResponseFactory;
@@ -17,7 +14,7 @@ use Nyholm\Psr7\Response;
 use Laminas\HttpHandlerRunner\Emitter\SapiEmitter;
 
 // Define source and cache directories
-$sourceDir = 'remote';
+$remoteDir = 'remote';
 $cacheDir = './cache';
 
 // Create PSR-17 factory
@@ -61,7 +58,7 @@ function checkImageCache($server, $savedFilePath, $glideParams)
 }
 
 // Function to download an image
-function downloadImage($url, $sourceDir)
+function downloadImage($url, $remoteDir)
 {
     $parsedUrl = parse_url($url);
     if (!$parsedUrl) {
@@ -93,7 +90,7 @@ function downloadImage($url, $sourceDir)
     }
 
     // Save the file with the correct extension
-    $outputFileName = './' . $sourceDir . '/' . $domainName . '/' . pathinfo($baseName, PATHINFO_FILENAME) . '-' . $md5Hash . '.' . $extension;
+    $outputFileName = './' . $remoteDir . '/' . $domainName . '/' . pathinfo($baseName, PATHINFO_FILENAME) . '-' . $md5Hash . '.' . $extension;
 
     if (!file_exists(dirname($outputFileName))) {
         mkdir(dirname($outputFileName), 0777, true);
@@ -172,13 +169,13 @@ if ($imageUrl) {
         $extension = strtolower(pathinfo($baseName, PATHINFO_EXTENSION));
 
         // Construct the expected source path
-        $expectedSourcePath = './' . $sourceDir . '/' . $domainName . '/' .
+        $expectedSourcePath = './' . $remoteDir . '/' . $domainName . '/' .
             pathinfo($baseName, PATHINFO_FILENAME) . '-' .
             $md5Hash . '.' . $extension;
 
         // Check if we need to download
         if (!file_exists($expectedSourcePath)) {
-            $savedFilePath = downloadImage($imageUrl, $sourceDir);
+            $savedFilePath = downloadImage($imageUrl, $remoteDir);
         } else {
             $savedFilePath = $expectedSourcePath;
         }

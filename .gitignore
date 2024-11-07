@@ -9,10 +9,12 @@
 /vendor/
 composer.lock
 
-# Environment files
+# Environment files and configs
 .env
 .env.*
 !.env.example
+/config/*
+!/config/whitelist.example.php
 
 # IDE and system files
 .idea/
