@@ -42,8 +42,8 @@ composer install
 3. Create required directories:
 
 ```bash
-mkdir cache remote
-chmod 777 cache remote
+mkdir cache_local cache_remote
+chmod 777 cache_local cache_remote
 ```
 
 4. Configure your web server (example Nginx configuration included)
@@ -113,7 +113,13 @@ The service currently includes several security measures:
 
 Images are cached in two layers:
 
-1. Original downloaded images in the `remote/` directory
-2. Processed images in the `cache/` directory
+1. Original downloaded images in the `cache_remote/` directory
+2. Processed images in the `cache_local/` directory
 
-I wouldn't recommend using this in production, yet.
+## Notes
+
+1. This is a fairly new project and I wouldn't recommend using this in production, yet.
+2. You might want to implement more rigorous checks or disable CPU intensive processes like blur.
+
+Contact me at hello@frontandback.co.nz
+https://frontandback.co.nz
