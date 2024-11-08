@@ -1,9 +1,8 @@
 # Cached and downloaded images
-/cache/*
-/remote/*
-!cache/.gitkeep
-!cache/remote/.gitkeep
-!remote/.gitkeep
+/cache_local/*
+/cache_remote/*
+!cache_local/.gitkeep
+!cache_remote/.gitkeep
 
 # Composer
 /vendor/
