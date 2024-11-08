@@ -118,8 +118,8 @@ class ImageProcessor
             $response = $this->server->getImageResponse($savedFilePath, $glideParams);
 
             $response = $response
-                ->withHeader('X-Cache-Status', 'HIT')
-                ->withHeader('X-Cache-Key', $cacheKey)
+                ->withHeader('FaB-Cache-Status', 'HIT')
+                ->withHeader('FaB-Cache-Key', $cacheKey)
                 ->withHeader('Cache-Control', 'public, max-age=8640000, s-maxage=31536000, stale-while-revalidate=86400, stale-if-error=86400')
                 ->withHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
 
