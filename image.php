@@ -2,6 +2,7 @@
 ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
+$process_timer = getrusage();
 
 require 'vendor/autoload.php';
 
@@ -66,7 +67,6 @@ function downloadImage($url, $remoteDir)
         throw new RuntimeException('Invalid URL');
     }
 
-    // Check if the domain is in the whitelist
     global $whitelistedDomains;
     $domain = $parsedUrl['host'];
 
@@ -128,7 +128,7 @@ function generateCacheKey($imageUrl, $glideParams)
     $cacheString = $imageUrl . http_build_query($glideParams);
 
     // Generate a hash (checksum) from the string
-    return md5($cacheString);  // Or use sha1 or any other hashing method
+    return md5($cacheString); // Or use sha1 or any other hashing method
 }
 
 // Get and Sanitize URL parameters
@@ -153,10 +153,23 @@ $glideParams = array_filter([
     'or' => isset($_GET['or']) ? filter_var($_GET['or'], FILTER_SANITIZE_STRING) : null,
 ]);
 
-if ((isset($glideParams['w']) && $glideParams['w'] > 5000) || (isset($glideParams['h']) && $glideParams['h'] > 5000)) {
+function logImageAccess($message)
+{
+    $logFile = __DIR__ . '/logs/access.log';
+    $timestamp = date("Y-m-d H:i:s");
+    $logEntry = "[$timestamp] $message\n";
+
+    // Append the log entry to the file
+    file_put_contents($logFile, $logEntry, FILE_APPEND);
+}
+
+if ((isset($glideParams['w']) && $glideParams['w'] > 3000) || (isset($glideParams['h']) && $glideParams['h'] > 3000)) {
     header('HTTP/1.1 413 Payload Too Large');
     echo 'Image dimensions are too large.';
     exit;
+}
+if ((isset($glideParams['blur']) && $glideParams['blur'] > 20)) {
+    $glideParams['blur'] = 20;
 }
 
 // Process the image if a URL is provided
@@ -185,7 +198,7 @@ if ($imageUrl) {
 
             $maxFileSize = 10 * 1024 * 1024; // 10MB
             if (filesize($savedFilePath) > $maxFileSize) {
-                unlink($savedFilePath);  // Remove large file
+                unlink($savedFilePath); // Remove large file
                 header('HTTP/1.1 413 Payload Too Large');
                 echo 'File size exceeds the limit.';
                 exit;
@@ -193,7 +206,7 @@ if ($imageUrl) {
 
             $imageInfo = getimagesize($savedFilePath);
             if (!$imageInfo || !in_array($imageInfo['mime'], ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'])) {
-                unlink($savedFilePath);  // Remove invalid image
+                unlink($savedFilePath); // Remove invalid image
                 header('HTTP/1.1 400 Bad Request');
                 echo 'Invalid image file.';
                 exit;
@@ -219,6 +232,7 @@ if ($imageUrl) {
 
             // Output the response
             (new SapiEmitter())->emit($response);
+            logImageAccess($process_timer["ru_utime.tv_usec"] . "ms to process " . $imageUrl . " with params " . json_encode($glideParams));
         } else {
             header('HTTP/1.1 404 Not Found');
             echo 'File does not exist after download.';
