@@ -143,6 +143,6 @@ class ImageProcessor
             (isset($parts['query']) ? "?{$parts['query']}" : '') .
             (isset($parts['fragment']) ? "#{$parts['fragment']}" : '');
         return $encodedUrl;
-        // Still not convinced we need to add: '&v='.$cacheKey seems to cause more issues that it supposedly solves
+        // Still not convinced we need to add: '&v='.$cacheKey seems to cause more issues that it supposedly solves. BTW if no other queries it should be ?v= 
     }
 }
