@@ -136,10 +136,13 @@ class ImageProcessor
 
     private function buildCanonicalUrl($imageUrl, $glideParams, $cacheKey)
     {
-        $canonicalUrl = urlencode($imageUrl) . '&v=' . $cacheKey;
-        if (!empty($glideParams)) {
-            $canonicalUrl .= '&' . http_build_query($glideParams);
-        }
-        return $canonicalUrl;
+        // the very complicated way of url encoding just the URI section of a URL
+        $parts = parse_url($imageUrl);
+        $encodedPath = implode('/', array_map('rawurlencode', explode('/', $parts['path'])));
+        $encodedUrl = "{$parts['scheme']}://{$parts['host']}{$encodedPath}" .
+            (isset($parts['query']) ? "?{$parts['query']}" : '') .
+            (isset($parts['fragment']) ? "#{$parts['fragment']}" : '');
+        return $encodedUrl;
+        // Still not convinced we need to add: '&v='.$cacheKey seems to cause more issues that it supposedly solves
     }
 }
