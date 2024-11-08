@@ -37,9 +37,17 @@ class ImageProcessor
 
     public function handleRequest($params)
     {
-        $imageUrl = isset($params['i']) ? filter_var($params['i'], FILTER_SANITIZE_URL) : null;
-        if ($imageUrl && strpos($imageUrl, 'http') !== 0) {
-            $imageUrl = 'https://' . $imageUrl;
+
+        error_log("Request parameters: " . print_r($params, true));
+
+        $imageUrl = isset($params['i']) ? $params['i'] : null;
+
+        if ($imageUrl) {
+            if (!preg_match('~^(?:f|ht)tps?://~i', $imageUrl)) {
+                $imageUrl = 'https://' . $imageUrl;
+            }
+
+            error_log("Processing URL: " . $imageUrl);
         }
 
         if (!$imageUrl) {
@@ -59,7 +67,7 @@ class ImageProcessor
             'q' => isset($params['q']) ? filter_var($params['q'], FILTER_SANITIZE_NUMBER_INT) : null,
             'blur' => isset($params['blur']) ? filter_var($params['blur'], FILTER_SANITIZE_NUMBER_INT) : null,
             'sharp' => isset($params['sharp']) ? filter_var($params['sharp'], FILTER_SANITIZE_NUMBER_INT) : null,
-            'fm' => isset($params['fm']) ? filter_var($params['fm'], FILTER_SANITIZE_FULL_SPECIAL_CHARS) : null,
+            'fm' => isset($params['fm']) ? filter_var($params['fm'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
             'crop' => isset($params['crop']) ? filter_var($params['crop'], FILTER_SANITIZE_STRING) : null,
             'bri' => isset($params['bri']) ? filter_var($params['bri'], FILTER_SANITIZE_NUMBER_INT) : null,
             'con' => isset($params['con']) ? filter_var($params['con'], FILTER_SANITIZE_NUMBER_INT) : null,
@@ -76,13 +84,14 @@ class ImageProcessor
             $savedFilePath = $downloader->getImage($imageUrl);
 
             if (!$savedFilePath || !file_exists($savedFilePath)) {
-                Utils::sendError(404, 'File does not exist after download.');
+                Utils::sendError(404, 'File (' . $imageUrl . ') does not exist after download.');
                 return;
             }
 
             $this->validateImage($savedFilePath);
             $this->outputProcessedImage($savedFilePath, $glideParams, $imageUrl);
         } catch (Exception $e) {
+            error_log("Error processing image: " . $e->getMessage());
             Utils::sendError(500, 'Error processing image: ' . $e->getMessage());
         }
     }
@@ -104,22 +113,25 @@ class ImageProcessor
 
     private function outputProcessedImage($savedFilePath, $glideParams, $imageUrl)
     {
-        $cacheKey = Utils::generateCacheKey($imageUrl, $glideParams);
-        $response = $this->server->getImageResponse($savedFilePath, $glideParams);
+        try {
+            $cacheKey = Utils::generateCacheKey($imageUrl, $glideParams);
+            $response = $this->server->getImageResponse($savedFilePath, $glideParams);
 
-        // Add canonical URL and cache version headers
-        $response = $response
-            ->withHeader('X-Cache-Status', 'HIT')
-            ->withHeader('X-Cache-Key', $cacheKey)  // Optional: helps with debugging
-            ->withHeader('Cache-Control', 'public, max-age=8640000, s-maxage=31536000, stale-while-revalidate=86400, stale-if-error=86400')
-            ->withHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
+            $response = $response
+                ->withHeader('X-Cache-Status', 'HIT')
+                ->withHeader('X-Cache-Key', $cacheKey)
+                ->withHeader('Cache-Control', 'public, max-age=8640000, s-maxage=31536000, stale-while-revalidate=86400, stale-if-error=86400')
+                ->withHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
 
-        // Might also want to add a Link header for the canonical URL
-        $canonicalUrl = $this->buildCanonicalUrl($imageUrl, $glideParams, $cacheKey);
-        $response = $response->withHeader('Link', "<$canonicalUrl>; rel=\"canonical\"");
+            $canonicalUrl = $this->buildCanonicalUrl($imageUrl, $glideParams, $cacheKey);
+            $response = $response->withHeader('Link', "<$canonicalUrl>; rel=\"canonical\"");
 
-        (new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
-        Utils::logImageAccess($imageUrl, $glideParams);
+            (new \Laminas\HttpHandlerRunner\Emitter\SapiEmitter())->emit($response);
+            Utils::logImageAccess($imageUrl, $glideParams);
+        } catch (Exception $e) {
+            error_log("Error in outputProcessedImage: " . $e->getMessage());
+            throw $e; // Re-throw to be caught by processImage
+        }
     }
 
     private function buildCanonicalUrl($imageUrl, $glideParams, $cacheKey)
