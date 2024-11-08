@@ -1,4 +1,4 @@
-# PHP Remote Image Processing Service
+# FaB Boost for Images - A Remote Image Processing Service in PHP
 
 A secure and efficient image processing microservice that remote downloads, caches, and manipulates images on the fly. Built with PHP and the League's Glide library, it provides a simple URL-based API for image transformations.
 
