@@ -7,7 +7,7 @@ A secure and efficient image processing microservice that remote downloads, cach
 - On-the-fly image processing
 - Secure domain whitelisting
 - Image caching
-- Support for multiple image formats (JPG, PNG, GIF, BMP, WebP)
+- Support for multiple image formats (JPG, PNG, GIF, BMP, WebP, AVIF)
 - Configurable image manipulations
 - Cache-Control headers for optimal performance
 - File size and dimension limits for security

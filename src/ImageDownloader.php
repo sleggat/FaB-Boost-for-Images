@@ -50,7 +50,7 @@ class ImageDownloader
         // Get extension
         $extension = strtolower(pathinfo($baseName, PATHINFO_EXTENSION));
 
-        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'])) {
+        if (!in_array($extension, ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp', 'avif'])) {
             Utils::sendError(415, 'Unsupported image format.');
         }
 

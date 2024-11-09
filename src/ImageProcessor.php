@@ -74,6 +74,7 @@ class ImageProcessor
             'gam' => isset($params['gam']) ? filter_var($params['gam'], FILTER_SANITIZE_NUMBER_INT) : null,
             'flip' => isset($params['flip']) ? filter_var($params['flip'], FILTER_SANITIZE_STRING) : null,
             'or' => isset($params['or']) ? filter_var($params['or'], FILTER_SANITIZE_STRING) : null,
+            'bg' => isset($params['bg']) ? filter_var($params['bg'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
         ]);
     }
 
@@ -105,7 +106,7 @@ class ImageProcessor
         }
 
         $imageInfo = getimagesize($savedFilePath);
-        if (!$imageInfo || !in_array($imageInfo['mime'], ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp'])) {
+        if (!$imageInfo || !in_array($imageInfo['mime'], ['image/jpeg', 'image/png', 'image/gif', 'image/bmp', 'image/webp', 'image/avif'])) {
             unlink($savedFilePath);
             Utils::sendError(400, 'Invalid image file.');
         }
