@@ -1,6 +1,6 @@
 # FaB Boost for Images - A Remote Image Processing Service in PHP
 
-A secure and efficient image processing microservice that remote downloads, caches, and manipulates images on the fly. Built with PHP and the League's Glide library, it provides a simple URL-based API for image transformations.
+FaB Boost for Images is a lightweight, efficient image processing microservice designed to simplify remote image hosting for client sites. It provides a straightforward, URL-based API for hassle-free image transformations.
 
 ## Features
 
@@ -30,7 +30,7 @@ A secure and efficient image processing microservice that remote downloads, cach
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/sleggat/imgcdn.git
+git clone https://github.com/sleggat/fab-boost-for-images.git
 ```
 
 2. Install dependencies:
@@ -91,6 +91,7 @@ Add image manipulation parameters as query strings:
 - `gam`: Gamma
 - `flip`: Flip image
 - `or`: Orientation
+- `bg`: Background colour
 
 Example:
 

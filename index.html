@@ -6,21 +6,171 @@
     <title>FaB Boost for Images</title>
   </head>
   <body>
+    <style>
+      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      body {
+        font-family: "Inter", sans-serif;
+        font-size: 16px;
+        line-height: 1.6;
+        color: #333;
+        background-color: #f9f9f9;
+        padding: 2rem;
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1,
+      h2,
+      h3 {
+        font-weight: 700;
+        color: #111;
+        margin-bottom: 0.8rem;
+        line-height: 1.3;
+      }
+
+      h1 {
+        font-size: 2.5rem;
+        color: #222;
+      }
+
+      h2 {
+        font-size: 2rem;
+      }
+
+      h3 {
+        font-size: 1.5rem;
+      }
+
+      p {
+        margin-bottom: 1.2rem;
+        color: #555;
+      }
+
+      a {
+        color: #007bff;
+        text-decoration: none;
+        font-weight: 600;
+      }
+
+      a:hover {
+        color: #0056b3;
+      }
+
+      code {
+        background-color: #f3f4f6;
+        padding: 0.25rem 0.4rem;
+        font-size: 0.9rem;
+        border-radius: 4px;
+        color: #d63384;
+      }
+
+      pre {
+        background-color: #2d2d2d;
+        color: #f8f8f2;
+        padding: 1rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 0.95rem;
+        margin-bottom: 1.2rem;
+        line-height: 1.5;
+      }
+
+      ul,
+      ol {
+        margin-bottom: 1.2rem;
+        padding-left: 1.2rem;
+      }
+
+      li {
+        margin-bottom: 0.6rem;
+      }
+
+      button {
+        background-color: #007bff;
+        color: #fff;
+        border: none;
+        border-radius: 4px;
+        padding: 0.5rem 1rem;
+        cursor: pointer;
+        font-weight: 600;
+        font-size: 1rem;
+      }
+
+      button:hover {
+        background-color: #0056b3;
+      }
+
+      img {
+        width: 100%;
+        height: auto;
+      }
+
+      .container {
+        max-width: 800px;
+        padding: 2rem;
+        margin: 0 auto;
+        background: #fff;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 8px;
+      }
+
+      header {
+        border-bottom: 1px solid #e2e8f0;
+        padding-bottom: 1rem;
+        margin-bottom: 2rem;
+      }
+
+      footer {
+        border-top: 1px solid #e2e8f0;
+        padding-top: 1rem;
+        margin-top: 2rem;
+        text-align: center;
+        color: #888;
+        font-size: 0.9rem;
+      }
+    </style>
     <h1>FaB Boost for Images</h1>
     <p>
-      A simple and efficient image processing microservice that remote downloads, caches, and manipulates images on the fly. Built with PHP and the League's Glide library, it
-      provides a simple URL-based API for image transformations.
+      FaB Boost for Images is a lightweight, efficient image processing microservice designed to simplify remote image hosting for client sites. It provides a straightforward,
+      URL-based API for hassle-free image transformations.
     </p>
+
     <p>
-      We use it in conjunction with a function that creates a lovely img tag with srcset ;
-      <br />
-      It accepts a URL like mydomain.com/my-image.jpg?w=100
-      <br />
-      Downloads and caches remote images from trusted domains, caching the original image
-      <br />
-      Performs transformations; resizes, crops, blurs etc., caching the transformed image
-      <br />
+      With FaB Boost for Images, generating responsive
+      <code>&lt;img&gt;</code>
+      tags is easy—complete with
+      <code>srcset</code>
+      attributes and scaled images, without relying on complex frameworks or hefty servers. Images are remotely downloaded, cached, and optimized for all screen sizes, making it a
+      practical solution for scalable image delivery across client projects.
     </p>
+
+    <h3>How It Works</h3>
+
+    <ul>
+      <li>
+        Remote Image Download and Caching: Images can be requested via URLs like
+        <br />
+        <code>img.my-domain.com/client-domain.com/photos/cat.jpg?w=100</code>
+        . Images are downloaded from trusted client domains and cached for faster access.
+      </li>
+      <li>On-the-Fly Image Transformations: Supports resizing, cropping, blurring, and more—all transformations are cached to ensure efficient delivery.</li>
+      <li>
+        Recommended Setup: Use a service like Cloudflare (even the free plan) on
+        <code>img.my-domain.com</code>
+        for enhanced performance.
+      </li>
+    </ul>
+
+    <h3>Open Source License</h3>
     <p>
       This project is open-source and
       <a href="https://github.com/sleggat/FaB-Boost-for-Images">available on GitHub</a>
@@ -33,5 +183,23 @@
       <a href="https://frontandback.co.nz" title="Fab Boost for Images by Front&Back">Front&Back</a>
       🐈
     </p>
+    <div>
+      <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock photographed by Steve Leggat">
+        <img
+          src="https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&fm=webp"
+          srcset="
+            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&fm=webp   300w,
+            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=600&fm=webp   600w,
+            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1000&fm=webp 1000w,
+            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1400&fm=webp 1400w,
+            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=2000&fm=webp 2000w
+          "
+          sizes="(max-width: 300px) 300px, (max-width: 600px) 600px, (max-width: 1000px) 1000px, (max-width: 1400px) 1400px, 2000px"
+          alt="Concert Photography Image" />
+      </a>
+      <small>
+        <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock photographed by Steve Leggat">Photo of Ken South Rock by Steve Leggat</a>
+      </small>
+    </div>
   </body>
 </html>
