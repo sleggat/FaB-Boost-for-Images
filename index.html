@@ -1,13 +1,36 @@
+<!-- ../../imgcdn/index.html -->
 <!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>FaB Boost for Images</title>
-  </head>
-  <body>
+    <title>FaB Boost for Images - Efficient Image Processing Microservice</title>
+    <meta name="description" content="FaB Boost for Images is a lightweight, efficient image processing microservice for responsive image delivery and optimization." />
+    <meta name="keywords" content="Front&Back, FaB Boost, Image Processing, Responsive Images, Image Optimization, Image CDN" />
+    <meta property="og:title" content="FaB Boost for Images" />
+    <meta property="og:description" content="Streamlined image processing microservice for responsive delivery" />
+    <meta property="og:image" content="https://boost.frontandback.co.nz/share.png?v=1" />
+    <meta property="og:type" content="website" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <link rel="icon" type="image/png" href="https://frontandback.co.nz/assets/images/favicon64.png?v=1730246675" sizes="64x64" />
+    <link rel="icon" type="image/png" href="https://frontandback.co.nz/assets/images/favicon256.png?v=1730246675" sizes="256x256" />
+    <link rel="apple-touch-icon" href="https://frontandback.co.nz/assets/images/share.png?v=1730246675" />
+    <link rel="shortcut icon" href="https://frontandback.co.nz/favicon.ico" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <style>
-      @import url("https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap");
+      :root {
+        --primary-color: #007bff;
+        --primary-dark: #0056b3;
+        --text-primary: #333;
+        --text-secondary: #555;
+        --background: #f9f9f9;
+        --card-background: #fff;
+        --border-color: #e2e8f0;
+        --code-background: #f3f4f6;
+        --code-color: #d63384;
+      }
 
       *,
       *::before,
@@ -18,188 +41,224 @@
       }
 
       body {
-        font-family: "Inter", sans-serif;
+        font-family: "Inter", system-ui, -apple-system, sans-serif;
         font-size: 16px;
         line-height: 1.6;
-        color: #333;
-        background-color: #f9f9f9;
-        padding: 2rem;
+        color: var(--text-primary);
+        background-color: var(--background);
+        -webkit-font-smoothing: antialiased;
+      }
+
+      .container {
         max-width: 800px;
-        margin: 0 auto;
+        padding: 2rem;
+        margin: 2rem auto;
+        background: var(--card-background);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        border-radius: 12px;
       }
 
       h1,
       h2,
       h3 {
         font-weight: 700;
-        color: #111;
-        margin-bottom: 0.8rem;
+        color: var(--text-primary);
+        margin: 2rem 0 1rem;
         line-height: 1.3;
       }
 
       h1 {
-        font-size: 2.5rem;
-        color: #222;
-      }
-
-      h2 {
-        font-size: 2rem;
-      }
-
-      h3 {
-        font-size: 1.5rem;
+        font-size: clamp(2rem, 5vw, 2.5rem);
+        margin-top: 0;
+        background: linear-gradient(120deg, var(--primary-color), var(--primary-dark));
+        -webkit-background-clip: text;
+        background-clip: text;
+        color: transparent;
       }
 
       p {
         margin-bottom: 1.2rem;
-        color: #555;
+        color: var(--text-secondary);
       }
 
       a {
-        color: #007bff;
+        color: var(--primary-color);
         text-decoration: none;
-        font-weight: 600;
+        font-weight: 500;
+        transition: color 0.2s ease;
       }
 
       a:hover {
-        color: #0056b3;
+        color: var(--primary-dark);
       }
 
       code {
-        background-color: #f3f4f6;
+        background-color: var(--code-background);
         padding: 0.25rem 0.4rem;
         font-size: 0.9rem;
         border-radius: 4px;
-        color: #d63384;
+        color: var(--code-color);
+        word-break: break-word;
       }
 
-      pre {
-        background-color: #2d2d2d;
-        color: #f8f8f2;
-        padding: 1rem;
-        border-radius: 8px;
-        overflow-x: auto;
-        font-size: 0.95rem;
-        margin-bottom: 1.2rem;
-        line-height: 1.5;
-      }
-
-      ul,
-      ol {
-        margin-bottom: 1.2rem;
+      ul {
+        margin: 1.2rem 0;
         padding-left: 1.2rem;
       }
 
       li {
-        margin-bottom: 0.6rem;
+        margin-bottom: 1rem;
       }
 
-      button {
-        background-color: #007bff;
-        color: #fff;
-        border: none;
-        border-radius: 4px;
-        padding: 0.5rem 1rem;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 1rem;
+      .image-container {
+        margin: 2rem 0;
+        border-radius: 8px;
+        overflow: hidden;
       }
 
-      button:hover {
-        background-color: #0056b3;
-      }
-
-      img {
+      .image-container img {
         width: 100%;
         height: auto;
+        display: block;
+        transition: transform 0.3s ease;
       }
 
-      .container {
-        max-width: 800px;
-        padding: 2rem;
-        margin: 0 auto;
-        background: #fff;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      .image-container:hover img {
+        transform: scale(1.02);
+      }
+
+      .image-caption {
+        text-align: center;
+        margin-top: 0.5rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+      }
+
+      .features {
+        display: grid;
+        gap: 1.5rem;
+        margin: 2rem 0;
+      }
+
+      .feature-item {
+        background: var(--code-background);
+        padding: 1.5rem;
         border-radius: 8px;
       }
 
-      header {
-        border-bottom: 1px solid #e2e8f0;
-        padding-bottom: 1rem;
-        margin-bottom: 2rem;
+      .github-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 0.5rem;
+        padding: 0.75rem 1.5rem;
+        background: var(--primary-color);
+        color: white;
+        border-radius: 6px;
+        font-weight: 600;
+        margin: 1rem 0;
+        transition: background-color 0.2s ease;
+      }
+
+      .github-link:hover {
+        background: var(--primary-dark);
+        color: white;
       }
 
       footer {
-        border-top: 1px solid #e2e8f0;
-        padding-top: 1rem;
-        margin-top: 2rem;
         text-align: center;
-        color: #888;
-        font-size: 0.9rem;
+        margin-top: 3rem;
+        padding-top: 2rem;
+        border-top: 1px solid var(--border-color);
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          margin: 1rem;
+          padding: 1.5rem;
+        }
       }
     </style>
-    <h1>FaB Boost for Images</h1>
-    <p>
-      FaB Boost for Images is a lightweight, efficient image processing microservice designed to simplify remote image hosting for client sites. It provides a straightforward,
-      URL-based API for hassle-free image transformations.
-    </p>
+  </head>
+  <body>
+    <main class="container">
+      <header>
+        <h1>FaB Boost for Images</h1>
+        <p>
+          <strong>FaB Boost for Images</strong> is a streamlined, efficient image processing microservice designed to easily generate multiple image variations for responsive delivery on client sites. It provides a complete setup for image
+          hosting and on-demand resizing.
+        </p>
+      </header>
 
-    <p>
-      With FaB Boost for Images, generating responsive
-      <code>&lt;img&gt;</code>
-      tags is easy—complete with
-      <code>srcset</code>
-      attributes and scaled images, without relying on complex frameworks or hefty servers. Images are remotely downloaded, cached, and optimized for all screen sizes, making it a
-      practical solution for scalable image delivery across client projects.
-    </p>
+      <div class="features">
+        <div class="feature-item">
+          <h3>Simple Integration</h3>
+          <p>
+            Generating responsive <code>&lt;img&gt;</code> tags is easy—complete with <code>srcset</code> attributes and scaled images, all without relying on complex frameworks or heavy servers. Images are downloaded, cached, and optimized
+            for any screen size.
+          </p>
+        </div>
+      </div>
 
-    <h3>How It Works</h3>
+      <section>
+        <h3>How It Works</h3>
+        <ul>
+          <li>
+            <strong>Remote Image Download and Caching:</strong> Images can be requested via URLs like:<br />
+            <code>img.your-domain.com/client-domain.com/photos/cat.jpg?w=100</code>
+          </li>
+          <li> <strong>On-the-Fly Transformations:</strong> Supports resizing, cropping, blurring, and more—all transformations are cached for efficient delivery. </li>
+          <li> <strong>Recommended Setup:</strong> Use a service like Cloudflare (even the free plan) on <code>img.your-domain.com</code> for enhanced performance. </li>
+        </ul>
+      </section>
 
-    <ul>
-      <li>
-        Remote Image Download and Caching: Images can be requested via URLs like
-        <br />
-        <code>img.my-domain.com/client-domain.com/photos/cat.jpg?w=100</code>
-        . Images are downloaded from trusted client domains and cached for faster access.
-      </li>
-      <li>On-the-Fly Image Transformations: Supports resizing, cropping, blurring, and more—all transformations are cached to ensure efficient delivery.</li>
-      <li>
-        Recommended Setup: Use a service like Cloudflare (even the free plan) on
-        <code>img.my-domain.com</code>
-        for enhanced performance.
-      </li>
-    </ul>
+      <section>
+        <h3>Ideal Use Cases</h3>
+        <p>
+          FaB Boost for Images is ideal for projects where robust image processing isn't readily available through existing infrastructure. This includes static sites, lightweight CMS platforms, or custom backend implementations where
+          adding full image processing capabilities would be overkill.
+        </p>
+        <ul>
+          <li>Quick implementation of responsive images across multiple projects</li>
+          <li>Centralized image processing for multiple client sites</li>
+          <li>Dynamic image optimization without heavy server-side processing</li>
+          <li>Simplified image CDN capabilities without full CDN complexity</li>
+          <li>Consistent image handling across different platforms and frameworks</li>
+          <li>Resource-efficient image processing for static or lightweight applications</li>
+        </ul>
+      </section>
 
-    <h3>Open Source License</h3>
-    <p>
-      This project is open-source and
-      <a href="https://github.com/sleggat/FaB-Boost-for-Images">available on GitHub</a>
-      for use in personal or commercial projects under the
-      <a href="https://opensource.org/license/mit">MIT License</a>
-      . Please note it’s provided “as-is,” without any warranty or liability.
-    </p>
-    <p>
-      Brought to you by
-      <a href="https://frontandback.co.nz" title="Fab Boost for Images by Front&Back">Front&Back</a>
-      🐈
-    </p>
-    <div>
-      <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock photographed by Steve Leggat">
-        <img
-          src="https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&fm=webp"
-          srcset="
-            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&fm=webp   300w,
-            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=600&fm=webp   600w,
-            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1000&fm=webp 1000w,
-            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1400&fm=webp 1400w,
-            https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=2000&fm=webp 2000w
-          "
-          sizes="(max-width: 300px) 300px, (max-width: 600px) 600px, (max-width: 1000px) 1000px, (max-width: 1400px) 1400px, 2000px"
-          alt="Concert Photography Image" />
-      </a>
-      <small>
-        <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock photographed by Steve Leggat">Photo of Ken South Rock by Steve Leggat</a>
-      </small>
-    </div>
+      <div class="image-container">
+        <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock (Kenichi Minami from Tokyo, Adam Aron Amram from NYC) photographed by Steve Leggat">
+          <img
+            src="https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&q=70&fm=webp"
+            srcset="
+              https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=300&q=70&fm=webp   300w,
+              https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=600&q=65&fm=webp   600w,
+              https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1000&q=60&fm=webp 1000w,
+              https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=1400&q=55&fm=webp 1400w,
+              https://boost.frontandback.co.nz/image/frontandback.co.nz/assets/concertphotography/16797204_10154038030921525_8571097321135596888_o_10154038030921525.jpg?w=2000&q=50&fm=webp 2000w
+            "
+            sizes="(max-width: 300px) 300px, (max-width: 600px) 600px, (max-width: 1000px) 1000px, (max-width: 1400px) 1400px, 2000px"
+            alt="Ken South Rock performing live"
+            width="2000"
+            height="1328"
+            loading="lazy"
+          />
+        </a>
+        <div class="image-caption">
+          <a href="https://frontandback.co.nz/services/creative-for-music" title="Ken South Rock photographed by Steve Leggat">Photo of Ken South Rock by Steve Leggat</a>
+        </div>
+      </div>
+
+      <section>
+        <h3>Open Source License</h3>
+        <p>This project is open-source and available under the <a href="https://opensource.org/license/mit">MIT License</a>. Please note it's provided "as-is," without any warranty or liability. </p>
+        <a href="https://github.com/sleggat/FaB-Boost-for-Images" class="github-link">View on GitHub</a>
+      </section>
+
+      <footer>
+        <p>Brought to you by <a href="https://frontandback.co.nz" title="Front&Back Design and Development">Front&Back</a>. 🐈 </p>
+      </footer>
+    </main>
   </body>
 </html>

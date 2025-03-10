@@ -1,5 +1,8 @@
 <?php
 
+ini_set('log_errors', 1);
+ini_set('error_log', __DIR__ . '/error_log.txt');
+
 function deleteOldFilesAndEmptyDirs($directory, $fileAgeLimitInSeconds = 2592000)
 {
     $iterator = new RecursiveIteratorIterator(
@@ -50,10 +53,10 @@ function formatSize($bytes)
 }
 
 // Run cleanup on both directories
-echo "Starting cleanup for './remote' directory...\n";
-deleteOldFilesAndEmptyDirs(__DIR__ . '/cache_remote');
+echo "Starting cleanup for '/../cache_remote' directory...\n";
+deleteOldFilesAndEmptyDirs(__DIR__ . '/../cache_remote');
 
-echo "\nStarting cleanup for './cache/remote' directory...\n";
-deleteOldFilesAndEmptyDirs(__DIR__ . '/cache_local/cache_remote');
+echo "\nStarting cleanup for '/../cache_local/cache_remote' directory...\n";
+deleteOldFilesAndEmptyDirs(__DIR__ . '/../cache_local/cache_remote');
 
 echo "Cleanup complete.\n";
