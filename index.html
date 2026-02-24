@@ -156,6 +156,22 @@
         border-radius: 8px;
       }
 
+      pre {
+        background-color: var(--code-background);
+        padding: 1.2rem;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 1.2rem 0;
+      }
+
+      pre code {
+        padding: 0;
+        background: none;
+        font-size: 0.85rem;
+        line-height: 1.7;
+        color: var(--text-primary);
+      }
+
       .github-link {
         display: inline-flex;
         align-items: center;
@@ -215,7 +231,7 @@
     <main class="container">
       <header>
         <h1>FaB Boost for Images</h1>
-        <p> A lightweight, open-source image processing microservice that gives any website on-demand resizing, format conversion, and optimisation&mdash;without the complexity of a full CDN. Point it at any image URL, add query parameters, and get back a perfectly sized, cached, and optimised result. </p>
+        <p> A lightweight, open-source image processing microservice that gives any website on-demand resizing, format conversion, and optimisation, without the complexity of a full CDN. Point it at any image URL, add query parameters, and get back a perfectly sized, cached, and optimised result. </p>
       </header>
 
       <div class="features">
@@ -225,7 +241,7 @@
         </div>
         <div class="feature-item">
           <h3>13 Transformation Parameters</h3>
-          <p> Resize, crop, convert formats, adjust brightness and contrast, flip, rotate, blur, sharpen, and set background colours&mdash;all through simple query parameters like <code>?w=800&amp;fm=webp&amp;q=80</code>. </p>
+          <p> Resize, crop, convert formats, adjust brightness and contrast, flip, rotate, blur, sharpen, and set background colours - all through simple query parameters like <code>?w=800&amp;fm=webp&amp;q=80</code>. </p>
         </div>
         <div class="feature-item">
           <h3>Two-Layer Caching</h3>
@@ -244,7 +260,7 @@
             <strong>Request any remote image via URL:</strong><br />
             <code>img.your-domain.com/client-domain.com/photos/cat.jpg?w=400&amp;fm=webp</code>
           </li>
-          <li> <strong>On-the-fly transformations:</strong> The image is downloaded, processed with your parameters, and cached&mdash;all in a single request. Subsequent requests for the same variation are served from cache. </li>
+          <li> <strong>On-the-fly transformations:</strong> The image is downloaded, processed with your parameters, and cached, all in a single request. Subsequent requests for the same variation are served from cache. </li>
           <li> <strong>Supports JPG, PNG, GIF, BMP, WebP, and AVIF</strong> for both input and output formats, with automatic quality optimisation. </li>
         </ul>
       </section>
@@ -257,6 +273,33 @@
           <li>Rapid prototyping where you need optimised images without infrastructure overhead</li>
           <li>Any project where a full image CDN is overkill but raw unoptimised images aren't good enough</li>
         </ul>
+      </section>
+
+      <section>
+        <h3>PHP Integration Example</h3>
+        <p>A helper function that generates a responsive <code>&lt;img&gt;</code> tag with <code>srcset</code>. Reads the original dimensions, builds breakpoints with wider gaps at larger sizes, and converts to WebP (preserving GIF for animations).</p>
+        <pre><code>define('FABBOOST_URL', 'https://img.your-domain.com/image/your-site.com');
+
+function fabboost($url, $alt = '', $class = '', $params = '')
+{
+    [$width, $height] = getimagesize('.' . $url) ?: [0, 0];
+    $fm = pathinfo($url, PATHINFO_EXTENSION) === 'gif' ? 'gif' : 'webp';
+    $base = FABBOOST_URL . $url . '?v=' . filemtime('.' . $url);
+    if ($params) $base .= '&amp;' . $params;
+
+    $widths = array_filter([300, 550, 950, 1500, 2200, 3050], fn($w) =&gt; $w &lt; $width);
+    $widths[] = $width; // always include original as final breakpoint
+    $srcset = implode(', ', array_map(
+        fn($w) =&gt; "{$base}&amp;fm={$fm}&amp;w={$w} {$w}w", $widths
+    ));
+
+    $cls = $class ? " class=\"{$class}\"" : '';
+    return "&lt;img{$cls} alt=\"{$alt}\" width=\"{$width}\" height=\"{$height}\""
+        . " srcset=\"{$srcset}\" src=\"{$base}&amp;fm={$fm}&amp;w=500\"&gt;";
+}</code></pre>
+        <p>Usage:</p>
+        <pre><code>&lt;?= fabboost('/assets/images/photo.jpg', 'A description', 'lazy') ?&gt;</code></pre>
+        <p>Breakpoints at 300, 550, 950, 1500, 2200, and 3050px, with wider gaps at larger sizes where the visual difference is less noticeable, capped at the original width to avoid upscaling.</p>
       </section>
 
       <div class="image-container">
