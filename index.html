@@ -215,13 +215,25 @@
     <main class="container">
       <header>
         <h1>FaB Boost for Images</h1>
-        <p> <strong>FaB Boost for Images</strong> is a streamlined, efficient image processing microservice designed to easily generate multiple image variations for responsive delivery on client sites. It provides a complete setup for image hosting and on-demand resizing. </p>
+        <p> A lightweight, open-source image processing microservice that gives any website on-demand resizing, format conversion, and optimisation&mdash;without the complexity of a full CDN. Point it at any image URL, add query parameters, and get back a perfectly sized, cached, and optimised result. </p>
       </header>
 
       <div class="features">
         <div class="feature-item">
-          <h3>Simple Integration</h3>
-          <p> Generating responsive <code>&lt;img&gt;</code> tags is easy—complete with <code>srcset</code> attributes and scaled images, all without relying on complex frameworks or heavy servers. Images are downloaded, cached, and optimized for any screen size. </p>
+          <h3>Simple URL-Based API</h3>
+          <p> No SDKs, no build steps, no configuration files. Just append parameters to an image URL and get back exactly what you need. Generate responsive <code>&lt;img&gt;</code> tags with full <code>srcset</code> support in seconds. </p>
+        </div>
+        <div class="feature-item">
+          <h3>13 Transformation Parameters</h3>
+          <p> Resize, crop, convert formats, adjust brightness and contrast, flip, rotate, blur, sharpen, and set background colours&mdash;all through simple query parameters like <code>?w=800&amp;fm=webp&amp;q=80</code>. </p>
+        </div>
+        <div class="feature-item">
+          <h3>Two-Layer Caching</h3>
+          <p> Original images are downloaded and cached locally. Every processed variation is cached separately, so subsequent requests are served instantly. Pair with Cloudflare (even the free plan) for a full CDN experience. </p>
+        </div>
+        <div class="feature-item">
+          <h3>Centralised Image Processing</h3>
+          <p> Host one instance and serve optimised images for all your client sites. Domain whitelisting keeps things secure, while each site gets responsive images without needing its own processing pipeline. </p>
         </div>
       </div>
 
@@ -229,24 +241,21 @@
         <h3>How It Works</h3>
         <ul>
           <li>
-            <strong>Remote Image Download and Caching:</strong> Images can be requested via URLs like:<br />
-            <code>img.your-domain.com/client-domain.com/photos/cat.jpg?w=100</code>
+            <strong>Request any remote image via URL:</strong><br />
+            <code>img.your-domain.com/client-domain.com/photos/cat.jpg?w=400&amp;fm=webp</code>
           </li>
-          <li> <strong>On-the-Fly Transformations:</strong> Supports resizing, cropping, blurring, and more—all transformations are cached for efficient delivery. </li>
-          <li> <strong>Recommended Setup:</strong> Use a service like Cloudflare (even the free plan) on <code>img.your-domain.com</code> for enhanced performance. </li>
+          <li> <strong>On-the-fly transformations:</strong> The image is downloaded, processed with your parameters, and cached&mdash;all in a single request. Subsequent requests for the same variation are served from cache. </li>
+          <li> <strong>Supports JPG, PNG, GIF, BMP, WebP, and AVIF</strong> for both input and output formats, with automatic quality optimisation. </li>
         </ul>
       </section>
 
       <section>
-        <h3>Ideal Use Cases</h3>
-        <p> FaB Boost for Images is ideal for projects where robust image processing isn't readily available through existing infrastructure. This includes static sites, lightweight CMS platforms, or custom backend implementations where adding full image processing capabilities would be overkill. </p>
+        <h3>Ideal For</h3>
         <ul>
-          <li>Quick implementation of responsive images across multiple projects</li>
-          <li>Centralized image processing for multiple client sites</li>
-          <li>Dynamic image optimization without heavy server-side processing</li>
-          <li>Simplified image CDN capabilities without full CDN complexity</li>
-          <li>Consistent image handling across different platforms and frameworks</li>
-          <li>Resource-efficient image processing for static or lightweight applications</li>
+          <li>Static sites, flat-file CMS platforms, or custom backends that lack built-in image processing</li>
+          <li>Agencies managing responsive images across multiple client projects from a single service</li>
+          <li>Rapid prototyping where you need optimised images without infrastructure overhead</li>
+          <li>Any project where a full image CDN is overkill but raw unoptimised images aren't good enough</li>
         </ul>
       </section>
 

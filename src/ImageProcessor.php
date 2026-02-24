@@ -7,7 +7,7 @@ class ImageProcessor
 
     public function __construct()
     {
-        $this->remoteDir = './cache_remote';
+        $this->remoteDir = 'cache_remote';
         $this->localDir = 'cache_local';
         $this->initializeGlideServer();
     }
@@ -26,7 +26,7 @@ class ImageProcessor
         };
 
         $this->server = \League\Glide\ServerFactory::create([
-            'source' => '.',
+            'source' => $this->remoteDir,
             'cache' => $this->localDir,
             'response' => new \League\Glide\Responses\PsrResponseFactory(
                 $responsePrototype,
@@ -90,7 +90,9 @@ class ImageProcessor
             }
 
             $this->validateImage($savedFilePath);
-            $this->outputProcessedImage($savedFilePath, $glideParams, $imageUrl);
+            // Strip remoteDir prefix so path is relative to Glide's source
+            $glideFilePath = substr($savedFilePath, strlen('./' . $this->remoteDir . '/'));
+            $this->outputProcessedImage($savedFilePath, $glideFilePath, $glideParams, $imageUrl);
         } catch (Exception $e) {
             error_log("Error processing image: " . $e->getMessage());
             Utils::sendError(500, 'Error processing image: ' . $e->getMessage());
@@ -112,12 +114,12 @@ class ImageProcessor
         }
     }
 
-    private function outputProcessedImage($savedFilePath, $glideParams, $imageUrl)
+    private function outputProcessedImage($savedFilePath, $glideFilePath, $glideParams, $imageUrl)
     {
         try {
             $cacheKey = Utils::generateCacheKey($imageUrl, $glideParams);
             ob_start();
-            $response = $this->server->getImageResponse($savedFilePath, $glideParams);
+            $response = $this->server->getImageResponse($glideFilePath, $glideParams);
             $strayOutput = ob_get_clean();
             if ($strayOutput) {
                 error_log("Suppressed output during image processing: " . $strayOutput);
