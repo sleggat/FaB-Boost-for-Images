@@ -55,6 +55,11 @@ class ImageProcessor
             return;
         }
 
+        if (!empty($params['purge'])) {
+            $this->purgeImage($imageUrl);
+            return;
+        }
+
         $glideParams = $this->sanitizeParameters($params);
         $this->processImage($imageUrl, $glideParams);
     }
@@ -76,6 +81,29 @@ class ImageProcessor
             'or' => isset($params['or']) ? filter_var($params['or'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
             'bg' => isset($params['bg']) ? filter_var($params['bg'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
         ]);
+    }
+
+    private function purgeImage($imageUrl)
+    {
+        try {
+            $downloader = new ImageDownloader($this->remoteDir);
+            $savedFilePath = $downloader->getImage($imageUrl);
+            $glideFilePath = substr($savedFilePath, strlen('./' . $this->remoteDir . '/'));
+
+            // Delete all processed variations from Glide cache
+            $this->server->deleteCache($glideFilePath);
+
+            // Delete the source file so it re-downloads fresh
+            if ($savedFilePath && file_exists($savedFilePath)) {
+                unlink($savedFilePath);
+            }
+
+            header('Content-Type: application/json');
+            echo json_encode(['status' => 'ok', 'message' => 'Cache purged for ' . $imageUrl]);
+        } catch (Exception $e) {
+            error_log("Error purging cache: " . $e->getMessage());
+            Utils::sendError(500, 'Error purging cache: ' . $e->getMessage());
+        }
     }
 
     private function processImage($imageUrl, $glideParams)

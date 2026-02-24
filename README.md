@@ -94,6 +94,7 @@ Add image manipulation parameters as query strings:
 | `flip` | Flip image | `v` (vertical), `h` (horizontal), `both` | `flip=v` |
 | `or` | Orientation | `0`, `90`, `180`, `270`, `auto` | `or=90` |
 | `bg` | Background colour | 3, 4, 6, or 8 character hex (without `#`) | `bg=ff0000` |
+| `purge` | Clear cached versions | `1` | `purge=1` |
 
 Parameters can be combined:
 
