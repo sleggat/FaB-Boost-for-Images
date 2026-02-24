@@ -68,12 +68,12 @@ class ImageProcessor
             'blur' => isset($params['blur']) ? filter_var($params['blur'], FILTER_SANITIZE_NUMBER_INT) : null,
             'sharp' => isset($params['sharp']) ? filter_var($params['sharp'], FILTER_SANITIZE_NUMBER_INT) : null,
             'fm' => isset($params['fm']) ? filter_var($params['fm'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
-            'crop' => isset($params['crop']) ? filter_var($params['crop'], FILTER_SANITIZE_STRING) : null,
+            'crop' => isset($params['crop']) ? filter_var($params['crop'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
             'bri' => isset($params['bri']) ? filter_var($params['bri'], FILTER_SANITIZE_NUMBER_INT) : null,
             'con' => isset($params['con']) ? filter_var($params['con'], FILTER_SANITIZE_NUMBER_INT) : null,
             'gam' => isset($params['gam']) ? filter_var($params['gam'], FILTER_SANITIZE_NUMBER_INT) : null,
-            'flip' => isset($params['flip']) ? filter_var($params['flip'], FILTER_SANITIZE_STRING) : null,
-            'or' => isset($params['or']) ? filter_var($params['or'], FILTER_SANITIZE_STRING) : null,
+            'flip' => isset($params['flip']) ? filter_var($params['flip'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
+            'or' => isset($params['or']) ? filter_var($params['or'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
             'bg' => isset($params['bg']) ? filter_var($params['bg'], FILTER_SANITIZE_SPECIAL_CHARS) : null,
         ]);
     }
@@ -116,12 +116,24 @@ class ImageProcessor
     {
         try {
             $cacheKey = Utils::generateCacheKey($imageUrl, $glideParams);
+            ob_start();
             $response = $this->server->getImageResponse($savedFilePath, $glideParams);
+            $strayOutput = ob_get_clean();
+            if ($strayOutput) {
+                error_log("Suppressed output during image processing: " . $strayOutput);
+            }
+
+            preg_match('~https?://[^/]+/image/([^/]+)~', $imageUrl, $matches);
+            error_log("Extracted domain: " . print_r($matches, true));
+
+            $allowedOrigin = isset($matches[1]) ? "https://" . $matches[1] : '*';
+            error_log("Setting Access-Control-Allow-Origin: " . $allowedOrigin);
 
             $response = $response
                 ->withHeader('FaB-Cache-Status', 'HIT')
                 ->withHeader('FaB-Cache-Key', $cacheKey)
                 ->withHeader('Cache-Control', 'public, max-age=8640000, s-maxage=31536000, stale-while-revalidate=86400, stale-if-error=86400')
+                ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
                 ->withHeader('Expires', gmdate('D, d M Y H:i:s \G\M\T', time() + 31536000));
 
             $canonicalUrl = $this->buildCanonicalUrl($imageUrl, $glideParams, $cacheKey);
