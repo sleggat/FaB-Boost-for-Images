@@ -14,7 +14,7 @@ FaB Boost for Images is a lightweight, efficient image processing microservice d
 
 ## Dependencies
 
-- PHP 7.4+
+- PHP 8.1+
 - Composer
 - Required PHP extensions:
   - GD or ImageMagick
@@ -79,24 +79,26 @@ https://your-domain.com/image/example.com/path/to/image.jpg
 
 Add image manipulation parameters as query strings:
 
-- `w`: Width
-- `h`: Height
-- `q`: Quality (0-100)
-- `blur`: Blur effect
-- `sharp`: Sharpening
-- `fm`: Format conversion
-- `crop`: Crop mode
-- `bri`: Brightness
-- `con`: Contrast
-- `gam`: Gamma
-- `flip`: Flip image
-- `or`: Orientation
-- `bg`: Background colour
+| Parameter | Description | Values | Example |
+|-----------|-------------|--------|---------|
+| `w` | Width in pixels | Any positive integer | `w=800` |
+| `h` | Height in pixels | Any positive integer | `h=600` |
+| `q` | Quality | `0` to `100` (default varies by format) | `q=80` |
+| `blur` | Blur effect | `0` to `100` | `blur=10` |
+| `sharp` | Sharpening | `0` to `100` | `sharp=15` |
+| `fm` | Format conversion | `jpg`, `png`, `gif`, `webp`, `avif` | `fm=webp` |
+| `crop` | Crop mode | `crop-center`, `crop-top`, `crop-bottom`, `crop-left`, `crop-right`, `crop-top-left`, `crop-top-right`, `crop-bottom-left`, `crop-bottom-right` (requires `w` and `h`) | `crop=crop-center` |
+| `bri` | Brightness | `-100` to `100` | `bri=50` |
+| `con` | Contrast | `-100` to `100` | `con=25` |
+| `gam` | Gamma | `0.1` to `9.99` | `gam=2` |
+| `flip` | Flip image | `v` (vertical), `h` (horizontal), `both` | `flip=v` |
+| `or` | Orientation | `0`, `90`, `180`, `270`, `auto` | `or=90` |
+| `bg` | Background colour | 3, 4, 6, or 8 character hex (without `#`) | `bg=ff0000` |
 
-Example:
+Parameters can be combined:
 
 ```
-https://your-domain.com/image/example.com/image.jpg?w=800&h=600&q=80
+https://your-domain.com/image/example.com/image.jpg?w=800&h=600&q=80&fm=webp
 ```
 
 ## Security
